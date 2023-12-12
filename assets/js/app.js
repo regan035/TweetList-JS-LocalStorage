@@ -17,12 +17,13 @@ const newTweet = (e) => {
   li.textContent = tweet;
   li.appendChild(removeButton);
   tweetList.appendChild(li);
-  //add to localStorage
+  //add to localStoraged
   addTweetLocalStorage(tweet);
+  //clear form after submission
+  document.getElementById("form").reset();
 };
 
 const addTweetLocalStorage = (tweet) => {
-  console.log("localStorage");
   // read existing tweet from localStorage
   let tweets = getTweetsFromLocalStorage();
   tweets.push(tweet);
@@ -47,11 +48,28 @@ const removeTweet = (e) => {
     e.target.parentElement.remove();
   }
   // remove tweet from localStorage
-  removeTweetsFromLocalStorage();
+  removeTweetsFromLocalStorage(e.target.parentElement.textContent);
+};
+
+const removeTweetsFromLocalStorage = (tweet) => {
+  // get tweets from localStorage
+  let tweets = getTweetsFromLocalStorage();
+
+  // remove X from every tweet
+  const tweetDelete = tweet.substring(0, tweet.length - 1);
+  // loop through tweets and remove target tweet by using ===
+  tweets.forEach((tweetInLocalStorage, index) => {
+    if (tweetDelete === tweetInLocalStorage) {
+      tweets.splice(index, 1);
+    }
+  });
+  // apply change to localStorage
+  localStorage.setItem("tweets", JSON.stringify(tweets));
 };
 
 const localStorageOnLoad = () => {
   let tweets = getTweetsFromLocalStorage();
+
   //loop through tweets from  localStorage
   tweets.forEach((tweet) => {
     // create remove button
